@@ -13,6 +13,11 @@ if [ ! -e client-ip.txt ]; then
     exit 1
 fi
 
+if [ ! -e server-ip.txt ]; then
+    echo Please create server-ip.txt with the IP address or FQDN of the primary/NFS server board
+    exit 1
+fi
+
 if [ ! -e api-credentials.txt ]; then
     echo Please create api-credentials.txt from the API Client manager here: https://app.torizon.io/#/account
     echo Access type needs to be api-minimal
@@ -45,6 +50,9 @@ cp -f shared-data.tar.gz credentials.zip colibri_imx7_update/
 
 sed -e "s~@client-ip@~$(cat client-ip.txt)~" exports.in > apalis_imx8_v1/changes/usr/etc/exports
 sed -e "s~@client-ip@~$(cat client-ip.txt)~" exports.in > apalis_imx8_update/changes/usr/etc/exports
+
+sed -e "s~@server-ip@~$(cat server-ip.txt)~" 100-offline-updates.toml.in > colibri_imx7_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+sed -e "s~@server-ip@~$(cat server-ip.txt)~" 100-offline-updates.toml.in > colibri_imx7_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 
 for MACHINE_CONFIG in apalis_imx8_v1 colibri_imx7_v1; do
     (
