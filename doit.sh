@@ -56,11 +56,25 @@ done
 
 API_CLIENT_ID=$(head -1 api-credentials.txt)
 API_CLIENT_SECRET=$(tail -1 api-credentials.txt)
+TDX_TOKEN=$(curl -s https://kc.torizon.io/auth/realms/ota-users/protocol/openid-connect/token \
+				 -d client_id=${API_CLIENT_ID} -d client_secret=${API_CLIENT_SECRET} \
+				 -d grant_type=client_credentials | jq -r .access_token)
 
 for i in apalis_imx8_update colibri_imx7_update; do
     (
         cd $i
         rm -rf tezi
-        torizoncore-builder build
+        torizoncore-builder build 2>&1 | tee build.hash
+	#     curl -s --header "Authorization: Bearer ${TDX_TOKEN}" \
+	# 		 --header "Content-Type: application/json" \
+	# 		 --location \
+	# 		 --request DELETE https://app.torizon.io/api/v1/user_repo/targets/${OS_PACKAGE_TARGET_NAME} || true
+	# ${TCB} platform push \
+	# 		--hardwareid '${TORIZON_MACHINE}' \
+	# 		--credentials '${CREDENTIALS}' \
+	# 		--package-name '${OS_PACKAGE_NAME}' \
+	# 		--package-version '${OS_PACKAGE_VERSION}_${PACKAGE_SUFFIX}_${OS_PACKAGE_BUILD_ID}' \
+	# 		'${OS_PACKAGE_OSTREE_REF}'
+    #     torizoncore-builder platform push
     )
 done
