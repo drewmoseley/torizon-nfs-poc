@@ -5,6 +5,13 @@ if [ ! -e server-ip.txt ]; then
     exit 1
 fi
 
+if [ ! -e api-credentials.txt ]; then
+    echo Please create api-credentials.txt from the API Client manager here: https://app.torizon.io/#/account
+    echo Access type needs to be api-minimal
+    echo Line 1 is the Client ID
+    echo Line 2 is the Client Secret
+fi
+
 if [ ! -e credentials.zip ]; then
     echo Please download account credentials from \"https://app.torizon.io/#/account\" to \"$(pwd)/credentials.zip\"
     exit 1
@@ -32,6 +39,16 @@ sed -e "s~@server-ip@~$(cat server-ip.txt)" exports.in > apalis_imx8_v1/changes/
 sed -e "s~@server-ip@~$(cat server-ip.txt)" exports.in > apalis_imx8_update/changes/usr/etc/exports
 
 for i in apalis_imx8_v1 colibri_imx7_v1; do
+    (
+        cd $i
+        torizoncore-builder build
+    )
+done
+
+API_CLIENT_ID=$(head -1 api-credentials.txt)
+API_CLIENT_SECRET=$(tail -1 api-credentials.txt)
+
+for i in apalis_imx8_update colibri_imx7_update; do
     (
         cd $i
         torizoncore-builder build
