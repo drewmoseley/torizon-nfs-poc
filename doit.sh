@@ -8,8 +8,8 @@ for app in wget curl jq; do
     fi
 done
 
-if [ ! -e server-ip.txt ]; then
-    echo Please create server-ip.txt with the IP address or FQDN of the server board
+if [ ! -e client-ip.txt ]; then
+    echo Please create client-ip.txt with the IP address or FQDN of the secondary/client board
     exit 1
 fi
 
@@ -43,8 +43,8 @@ cp -f shared-data.tar.gz credentials.zip apalis_imx8_update/
 cp -f shared-data.tar.gz credentials.zip colibri_imx7_v1/
 cp -f shared-data.tar.gz credentials.zip colibri_imx7_update/
 
-sed -e "s~@server-ip@~$(cat server-ip.txt)~" exports.in > apalis_imx8_v1/changes/usr/etc/exports
-sed -e "s~@server-ip@~$(cat server-ip.txt)~" exports.in > apalis_imx8_update/changes/usr/etc/exports
+sed -e "s~@client-ip@~$(cat client-ip.txt)~" exports.in > apalis_imx8_v1/changes/usr/etc/exports
+sed -e "s~@client-ip@~$(cat client-ip.txt)~" exports.in > apalis_imx8_update/changes/usr/etc/exports
 
 for MACHINE_CONFIG in apalis_imx8_v1 colibri_imx7_v1; do
     (
