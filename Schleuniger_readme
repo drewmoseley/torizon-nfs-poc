@@ -12,14 +12,11 @@ Here is how you build a custom TorizonCore from source using yocto (for building
 apalis_imx8_v1 contains the files for building the initial image version which also acts as an NFS server. 
 apalis_imx8_v1			
 ├── changes			# changes to be added on top of input image
-│   ├── nfs_mnt		# Add a root directory for nfs volume
-│   │   └── myshareddir
+│   ├── srv			# Add a root directory for nfs volume
+│   │   └── nfs
 │   └── usr			
 │       └── etc
 │           ├── exports	# exports file to grant access to NFS clients
-│           ├── greenboot
-│           │   └── green.d	
-│           │       └── 02_set_nfs_share_permissions.sh	# greenboot script to set permissions for NFS client to access the shared dir. This script runs only after a successful boot.
 │           └── sota
 │               └── conf.d
 │                   └── 100-offline-updates.toml		# config file for secure offline update with pointer to an external USB media.
@@ -33,18 +30,13 @@ Next step is to build the image using $ torizoncore-builder build command. It wi
 colibri_imx7_v1 follows a similar file structure, except for the config files for NFS client. 
 colibri_imx7_v1
 ├── changes
-│   ├── nfs_mnt
-│   │   └── myshareddir
+│   ├── srv
+│   │   └── nfs
 │   └── usr
 │       └── etc
-│           ├── auto.master				# Master Map file for autofs
-│           ├── greenboot
-│           │   └── green.d
-│           │       └── 90_mount_nfs_volume.sh	# greenboot script to mount the nfs volume on demand. 
 │           ├── sota
 │           │   └── conf.d
 │           │       └── 100-offline-updates.toml	# config file for secure offline update with pointer to the NFS volume.
-│           └── test.share		# autofs map file
 ├── tcbuild.yaml
 └── torizon-core-lite-colibri-imx7-emmc-Tezi_5.7.1-devel-20220924102833+build.0.tar
 
@@ -55,8 +47,8 @@ colibri_imx7_update contains the files for creating the update image using toriz
 
 colibri_imx7_update
 ├── changes
-│   ├── nfs_mnt
-│   │   └── myshareddir
+│   ├── srv
+│   │   └── nfs
 │   └── usr
 │       └── etc
 │           ├── auto.master
@@ -79,8 +71,8 @@ It will create a directory called "update" with the image and metadata in it. Yo
 apalis_imx8_update has files for its own update and for the update of colibri_imx7_update packed in a root directory.
 apalis_imx8_update
 ├── changes
-│   ├── nfs_mnt
-│   │   └── myshareddir
+│   ├── srv
+│   │   └── nfs
 │   └── usr
 │       └── etc
 │           ├── exports
@@ -100,12 +92,7 @@ Note: Since the primary device (NFS server) reboots with the update, it breaks i
 Once it is booted, copy the update lockbox (named update) for colibri_imx7_update first into /tmp directory and from there into the NFS volume. Use scp to copy the update lockbox from your development machine into the /tmp directory first. (This process needs to be automated by packing the update into the root filesystem of primary device and is work in progress ...)
 
 Example:
-user@dev_pc:$ sudo scp -r /path/colibri_imx7_update/update torizon@<apalis_ip_address>:/tmp
-root@apalis-imx8-12345678:# cp -r /tmp/update /nfs_mnt/myshareddir
+user@dev_pc:$ sudo scp -r /path/colibri_imx7_update/update torizon@<apalis_ip_address>:/nfs/
 
 The colibri device running the initial version at this point will pull its update from this NFS volume (since it is offline update is pointing to the NFS mount volume). Wait for the device to finish its update. You can verify the update using the command $ ostree admin status
 You can also see that it wrote the boot status file (secondary_update_status.txt) into the NFS directory. 
-
-
-
-
