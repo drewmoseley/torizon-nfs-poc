@@ -62,9 +62,13 @@ TDX_TOKEN=$(curl -s https://kc.torizon.io/auth/realms/ota-users/protocol/openid-
 
 # Make sure colibri_imx7_update is first in the list so that it
 # can be built and included in the build of apalis_imx8_update
+PACKAGE_VERSION=1
+EXPIRATION_DATE=$(date -d "+7 days" -u +%Y-%m-%dT%H:%M:%SZ)
+
 for MACHINE_CONFIG in colibri_imx7_update apalis_imx8_update; do
     (
         cd $MACHINE_CONFIG
+
         rm -rf tezi
 
         if [ -e "build.hash" ]; then
@@ -82,7 +86,47 @@ for MACHINE_CONFIG in colibri_imx7_update apalis_imx8_update; do
 	    torizoncore-builder platform push \
 			--credentials credentials.zip \
 			--package-name "${MACHINE_CONFIG}" \
-			--package-version 1 \
+			--package-version "${PACKAGE_VERSION}" \
 			"${MACHINE_CONFIG}"
+
+        BUILD_HASH=$(cat build.hash)
+        PACKAGE_LENGTH=$(curl -s --header "Authorization: Bearer ${TDX_TOKEN}" --location \
+					          --request GET https://app.torizon.io/api/v1/user_repo/targets.json | \
+					         jq ".signed.targets[\"${MACHINE_CONFIG}-${BUILD_HASH}\"].length")
+
+        echo Creating Lockbox
+        read -d '' LOCKBOX_BODY << EOF
+{
+  "expiresAt": "${EXPIRATION_DATE}",
+  "values": {
+    "${MACHINE_CONFIG}-${BUILD_HASH}": {
+      "hashes": {
+        "sha256": "${BUILD_HASH}"
+      },
+      "length": ${PACKAGE_LENGTH},
+      "custom": {
+        "hardwareIds": [
+          "${TORIZON_MACHINE}"
+        ]
+      }
+    }
+  }
+}
+EOF
+        
+        set -x
+	    curl -s --header "Authorization: Bearer ${TDX_TOKEN}" \
+			--header "Content-Type: application/json" \
+			--location \
+			--request POST https://app.torizon.io/api/v1/admin/repo/offline-updates/${MACHINE_CONFIG}_${PACKAGE_VERSION} \
+			--data "${LOCKBOX_BODY}"
+
+        echo Creating Update media
+	    torizoncore-builder platform lockbox \
+			   "${MACHINE_CONFIG}_${PACKAGE_VERSION}" \
+			   --credentials credentials.zip \
+			   --output-directory update \
+			   --force
+        set +x
     )
 done
