@@ -55,10 +55,10 @@ customization:
 # >> The output section defines properties of the output image.
 output:
   # >> OSTree deployment configuration (relevant also for Easy Installer output).
-  # ostree:
-    # branch: my-dev-branch
-    # commit-subject: "OSTree commit subject"
-    # commit-body: "OSTree commit body"
+  ostree:
+    branch: colibri_imx7_update
+    commit-subject: "Updated OSTree for colibri-imx7 NFS Update POC"
+    commit-body: "This is the updated OSTree image for the server size of the NFS Update POC"
   # >> Parameters for deploying to an Easy Installer image.
   easy-installer:
     # >> Output directory of the customized image (REQUIRED):
