@@ -1,0 +1,4 @@
+[uptane]
+enable_offline_updates = true 
+enable_online_updates = false
+offline_updates_source = /var/rootdirs/media/INTENSO/update 
