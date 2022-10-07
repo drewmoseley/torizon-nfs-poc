@@ -10,3 +10,4 @@ apalis_imx8_v1/changes/usr/etc/exports
 apalis_imx8_update/changes/usr/etc/exports
 */tezi
 api-credentials.txt
+*/build.hash

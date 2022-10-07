@@ -46,9 +46,9 @@ cp -f shared-data.tar.gz credentials.zip colibri_imx7_update/
 sed -e "s~@server-ip@~$(cat server-ip.txt)~" exports.in > apalis_imx8_v1/changes/usr/etc/exports
 sed -e "s~@server-ip@~$(cat server-ip.txt)~" exports.in > apalis_imx8_update/changes/usr/etc/exports
 
-for i in apalis_imx8_v1 colibri_imx7_v1; do
+for MACHINE_CONFIG in apalis_imx8_v1 colibri_imx7_v1; do
     (
-        cd $i
+        cd $MACHINE_CONFIG
         rm -rf tezi
         torizoncore-builder build
     )
@@ -60,21 +60,29 @@ TDX_TOKEN=$(curl -s https://kc.torizon.io/auth/realms/ota-users/protocol/openid-
 				 -d client_id=${API_CLIENT_ID} -d client_secret=${API_CLIENT_SECRET} \
 				 -d grant_type=client_credentials | jq -r .access_token)
 
-for i in apalis_imx8_update colibri_imx7_update; do
+# Make sure colibri_imx7_update is first in the list so that it
+# can be built and included in the build of apalis_imx8_update
+for MACHINE_CONFIG in colibri_imx7_update apalis_imx8_update; do
     (
-        cd $i
+        cd $MACHINE_CONFIG
         rm -rf tezi
-        torizoncore-builder build 2>&1 | tee build.hash
-	#     curl -s --header "Authorization: Bearer ${TDX_TOKEN}" \
-	# 		 --header "Content-Type: application/json" \
-	# 		 --location \
-	# 		 --request DELETE https://app.torizon.io/api/v1/user_repo/targets/${OS_PACKAGE_TARGET_NAME} || true
-	# ${TCB} platform push \
-	# 		--hardwareid '${TORIZON_MACHINE}' \
-	# 		--credentials '${CREDENTIALS}' \
-	# 		--package-name '${OS_PACKAGE_NAME}' \
-	# 		--package-version '${OS_PACKAGE_VERSION}_${PACKAGE_SUFFIX}_${OS_PACKAGE_BUILD_ID}' \
-	# 		'${OS_PACKAGE_OSTREE_REF}'
-    #     torizoncore-builder platform push
+
+        if [ -e "build.hash" ]; then
+            echo Deleting image ${MACHINE_CONFIG}-$(cat build.hash)
+            curl -s --header "Authorization: Bearer ${TDX_TOKEN}" \
+			     --header "Content-Type: application/json" \
+			     --location \
+			     --request DELETE https://app.torizon.io/api/v1/user_repo/targets/${MACHINE_CONFIG}-$(cat build.hash) || true
+        fi
+
+        torizoncore-builder build 2>&1 | tee build.out
+        grep 'Deploying OSTree with checksum' build.out  | awk '{print $NF}' | tr -d '[:space:]' > build.hash
+        rm -f build.out
+
+	    torizoncore-builder platform push \
+			--credentials credentials.zip \
+			--package-name "${MACHINE_CONFIG}" \
+			--package-version 1 \
+			"${MACHINE_CONFIG}"
     )
 done
