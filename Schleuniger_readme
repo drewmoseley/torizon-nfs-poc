@@ -1,13 +1,22 @@
-This directory contains artifacts for building your own customized torizon core lite images (both an initial version and an updated version) for an apalis imx8 (application board) and colibri imx7  (RT board) modules using torizon core builder (TCB).
-More details regarding TCB workflow and commands manual can be found here: https://developer.toradex.com/torizon/in-depth/torizoncore-builder/
+This directory contains artifacts for building your own customized
+torizoncore-lite images (both an initial version and an updated version) for an
+apalis-imx8 (application board) and colibri-imx7 (RT board) modules using
+torizoncore-builder(TCB).  More details regarding TCB workflow and commands
+manual can be found here:
+https://developer.toradex.com/torizon/in-depth/torizoncore-builder/
 
 Details regarding the content inside each directories:
 
-Please note that you need to build provisioned images so that they will be compatable for offline updates later. For this you need to add provisioning data (shared-data.tar.gz) into each of these directories before building the images. Here is how you create the provisioning data: https://developer.toradex.com/torizon/working-with-torizon/production-programming-in-torizon/#getting-provisioning-data
+Please note that you need to build provisioned images so that they will be compatible
+with offline updates. For this you need to add provisioning data (shared-data.tar.gz)
+into each of the directories before building. Details regarding provisioning data are
+here:
+   https://developer.toradex.com/torizon/working-with-torizon/production-programming-in-torizon/#getting-provisioning-data
+
 The path to the provisioning data is provided in the tcbuild.yaml file.
 
-
-Here is how you build a custom TorizonCore from source using yocto (for building torizon core lite image): https://developer.toradex.com/torizon/in-depth/build-torizoncore-from-source-with-yocto-projectopenembedded/#torizoncore-distro
+Details for building a custom torizon-core-lite image are here:
+   https://developer.toradex.com/torizon/in-depth/build-torizoncore-from-source-with-yocto-projectopenembedded/#torizoncore-distro
 
 apalis_imx8_v1 contains the files for building the initial image version which also acts as an NFS server. 
 apalis_imx8_v1			
@@ -23,9 +32,11 @@ apalis_imx8_v1
 ├── tcbuild.yaml	# configuration for adding the customizations
 └── torizon-core-lite-apalis-imx8-Tezi_5.7.1-devel-20220920131951+build.0.tar	# custom tc lite image built from yocto layers with additional packages for NFS and AutoFS
 
-
-Next step is to build the image using $ torizoncore-builder build command. It will create an output directory (whose name is given in the tcbuild.yaml file) with the custom Tezi image in it. You can install this image on your device using toradex easy installer (by hosting it on a local web server fôr copying the output directory into a local media): https://developer.toradex.com/easy-installer/in-depth/toradex-easy-installer-detailed-manual/#feeds-f  
-
+THe next step is to build the image using the "torizoncore-builder build" command.
+This will create an output directory (named tezi in this setup) containingh thee
+custom Tezi image. You can install this image on your device using Toradex Easy
+Installer by hosting it on a local web server:
+    https://developer.toradex.com/easy-installer/in-depth/toradex-easy-installer-detailed-manual/#feeds-f
 
 colibri_imx7_v1 follows a similar file structure, except for the config files for NFS client. 
 colibri_imx7_v1
@@ -40,10 +51,12 @@ colibri_imx7_v1
 ├── tcbuild.yaml
 └── torizon-core-lite-colibri-imx7-emmc-Tezi_5.7.1-devel-20220924102833+build.0.tar
 
-You have to add provisioning data into colibri_imx7_v1 and build the Tezi image using $ torizoncore-builder build command. Install this image on your colibri imx7 device using toradex easy installer.
+You have to add provisioning data into colibri_imx7_v1 and build the Tezi image using
+the "torizoncore-builder build" command. Install this image on your colibri-imx7 device
+using Toradex Easy Installer.
 
-
-colibri_imx7_update contains the files for creating the update image using torizon core builder.
+The colibri_imx7_update folder contains the files for creating the update image
+using torizoncore-builder.
 
 colibri_imx7_update
 ├── changes
@@ -51,22 +64,17 @@ colibri_imx7_update
 │   │   └── nfs
 │   └── usr
 │       └── etc
-│           ├── auto.master
-│           ├── greenboot
-│           │   ├── green.d
-│           │   │   └── 95_write_boot_status_to_nfs.sh	# writes the update SUCCESS status file into NFS volume
-│           │   └── red.d
-│           │       └── 95_write_boot_failure_to_nfs.sh	# writes the update FAILURE status file into NFS volume
 │           ├── sota
 │           │   └── conf.d
 │           │       └── 100-offline-updates.toml		# config file for secure offline update with pointer to the NFS volume.
-│           └── test.share
 ├── tcbuild.yaml
 ├── torizon-core-lite-colibri-imx7-emmc-Tezi_5.7.1-devel-20220929182741+build.0.tar
 
-Build the output image after adding provisioning data into this directory. Next, you need to create an update lockbox for this image using our OTA platform. This lockbox is what you use for offline uopdates. Here is how you create a lockbox for secure offline updates: https://developer.toradex.com/torizon/how-to/torizon-updates/first-steps-with-secure-offline-updates/#uploading-software-packages-to-torizon-platform
-It will create a directory called "update" with the image and metadata in it. You will use this lockbox later for updating the colibri imx7 device.
+Build the output image after adding provisioning data into this directory.
 
+Next, you need to create an update lockbox for this image using our OTA platform.
+This lockbox is used for offline updates. Details for creating lockboes are here:
+    https://developer.toradex.com/torizon/how-to/torizon-updates/first-steps-with-secure-offline-updates/#uploading-software-packages-to-torizon-platform
 
 apalis_imx8_update has files for its own update and for the update of colibri_imx7_update packed in a root directory.
 apalis_imx8_update
@@ -76,23 +84,23 @@ apalis_imx8_update
 │   └── usr
 │       └── etc
 │           ├── exports
-│           ├── greenboot
-│           │   └── green.d
-│           │       └── 02_set_nfs_share_permissions.sh
 │           └── sota
 │               └── conf.d
 │                   └── 100-offline-updates.toml 	# config file for secure offline update with pointer to an external USB media.
 ├── tcbuild.yaml
 └── torizon-core-lite-apalis-imx8-Tezi_5.7.1-devel-20220920131951+build.0.tar
 
-Build the image and create an update lockbox for this image. You just need to copy the update directory into a USB and insert it into your device. It will automatically start the update process. 
+Build the image and create an update lockbox for this image. You just need to
+copy the update directory into a USB and insert it into your device. It will
+automatically start the update process.
 
-Note: Since the primary device (NFS server) reboots with the update, it breaks its NFS connection to the secondary (NFS client). As a temporary work around to restore the NFS connection, you need to reboot your secondary device at after the primary finishes its update. (Automating this process is work in progress ...)
-
-Once it is booted, copy the update lockbox (named update) for colibri_imx7_update first into /tmp directory and from there into the NFS volume. Use scp to copy the update lockbox from your development machine into the /tmp directory first. (This process needs to be automated by packing the update into the root filesystem of primary device and is work in progress ...)
+Once the boards are booted, copy the update lockbox (named update) for
+colibri_imx7_update to your board.
 
 Example:
 user@dev_pc:$ sudo scp -r /path/colibri_imx7_update/update torizon@<apalis_ip_address>:/nfs/
 
-The colibri device running the initial version at this point will pull its update from this NFS volume (since it is offline update is pointing to the NFS mount volume). Wait for the device to finish its update. You can verify the update using the command $ ostree admin status
-You can also see that it wrote the boot status file (secondary_update_status.txt) into the NFS directory. 
+The colibri device running the initial version at this point will pull its
+update from this NFS volume (since it is offline update is pointing to the NFS
+mount volume). Wait for the device to finish its update. You can verify the
+update using the command "ostree admin status"
