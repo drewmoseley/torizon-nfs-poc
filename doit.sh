@@ -49,6 +49,7 @@ sed -e "s~@server-ip@~$(cat server-ip.txt)~" exports.in > apalis_imx8_update/cha
 for i in apalis_imx8_v1 colibri_imx7_v1; do
     (
         cd $i
+        rm -rf tezi
         torizoncore-builder build
     )
 done
@@ -59,6 +60,7 @@ API_CLIENT_SECRET=$(tail -1 api-credentials.txt)
 for i in apalis_imx8_update colibri_imx7_update; do
     (
         cd $i
+        rm -rf tezi
         torizoncore-builder build
     )
 done
