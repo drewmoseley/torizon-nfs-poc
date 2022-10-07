@@ -62,7 +62,7 @@ output:
   # >> Parameters for deploying to an Easy Installer image.
   easy-installer:
     # >> Output directory of the customized image (REQUIRED):
-    local: torizon-core-lite-colibri-imx7-emmc-Tezi_5.7.1.CUSTOM
+    local: tezi
     # >> Information shown by Toradex Easy Installer:
     # name: "My customized image"
     # description: "My customized image (description)"
