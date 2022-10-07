@@ -1,5 +1,13 @@
 #!/bin/bash
 
+for app in wget curl jq; do
+    if [ -z "$(type -path $app)" ]; then
+        echo Please install $app
+        set +x
+        exit 1
+    fi
+done
+
 if [ ! -e server-ip.txt ]; then
     echo Please create server-ip.txt with the IP address or FQDN of the server board
     exit 1
