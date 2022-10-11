@@ -61,8 +61,8 @@ cp -f shared-data.tar.gz credentials.zip colibri_imx7_update/
 sed -e "s~@client-ip@~${client_ip}~" exports.in > apalis_imx8_v1/changes/usr/etc/exports
 sed -e "s~@client-ip@~${client_ip}~" exports.in > apalis_imx8_update/changes/usr/etc/exports
 
-sed -e "s~@server-ip@~${server_ip}~" 100-offline-updates.toml.in > colibri_imx7_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
-sed -e "s~@server-ip@~${server_ip}~" 100-offline-updates.toml.in > colibri_imx7_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+sed -e "s~@server-ip@~${server_ip}~" 100-offline-updates-client.toml.in > colibri_imx7_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+sed -e "s~@server-ip@~${server_ip}~" 100-offline-updates-client.toml.in > colibri_imx7_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 
 for MACHINE_CONFIG in apalis_imx8_v1 colibri_imx7_v1; do
     (
