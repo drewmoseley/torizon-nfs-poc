@@ -13,6 +13,8 @@ if [ ! -e config.sh ]; then
 server_ip=
 client_ip=
 usb_key=
+api_client_id=
+api_client_secret=
 EOF
     echo "Please edit config.sh and set parameter values"
     exit 1
@@ -34,11 +36,9 @@ if [ -z "${usb_key}" ]; then
     exit 1
 fi
 
-if [ ! -e api-credentials.txt ]; then
-    echo Please create api-credentials.txt from the API Client manager here: https://app.torizon.io/#/account
-    echo Access type needs to be api-minimal
-    echo Line 1 is the Client ID
-    echo Line 2 is the Client Secret
+if [ -z "${api_client_id}" ] || [ -z "${api_client_secret}" ]; then
+    echo Please add API credentias from  https://app.torizon.io/#/account to config.sh
+    exit 1
 fi
 
 if [ ! -e credentials.zip ]; then
@@ -81,10 +81,8 @@ for MACHINE_CONFIG in apalis_imx8_v1 colibri_imx7_v1; do
     )
 done
 
-API_CLIENT_ID=$(head -1 api-credentials.txt)
-API_CLIENT_SECRET=$(tail -1 api-credentials.txt)
 TDX_TOKEN=$(curl -s https://kc.torizon.io/auth/realms/ota-users/protocol/openid-connect/token \
-				 -d client_id=${API_CLIENT_ID} -d client_secret=${API_CLIENT_SECRET} \
+				 -d client_id=${api_client_id} -d client_secret=${api_client_secret} \
 				 -d grant_type=client_credentials | jq -r .access_token)
 
 # Make sure colibri_imx7_update is first in the list so that it

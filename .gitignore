@@ -8,7 +8,6 @@ tcb-env-setup.sh.tmp
 apalis_imx8_v1/changes/usr/etc/exports
 apalis_imx8_update/changes/usr/etc/exports
 */tezi
-api-credentials.txt
 */build.hash
 */update/
 */changes/usr/etc/sota/conf.d/100-offline-updates.toml
