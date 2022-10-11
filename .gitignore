@@ -11,6 +11,5 @@ apalis_imx8_update/changes/usr/etc/exports
 api-credentials.txt
 */build.hash
 */update/
-colibri_imx7_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
-colibri_imx7_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+*/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 config.sh

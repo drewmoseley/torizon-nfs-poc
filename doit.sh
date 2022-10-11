@@ -12,6 +12,7 @@ if [ ! -e config.sh ]; then
     cat > config.sh <<EOF
 server_ip=
 client_ip=
+usb_key=
 EOF
     echo "Please edit config.sh and set parameter values"
     exit 1
@@ -25,6 +26,11 @@ fi
 
 if [ -z "${server_ip}" ]; then
     echo Please add server_ip to config.sh with the IP address or FQDN of the primary/NFS server board
+    exit 1
+fi
+
+if [ -z "${usb_key}" ]; then
+    echo Please add usb_key to config.sh with the name of the USB key
     exit 1
 fi
 
@@ -63,6 +69,9 @@ sed -e "s~@client-ip@~${client_ip}~" exports.in > apalis_imx8_update/changes/usr
 
 sed -e "s~@server-ip@~${server_ip}~" 100-offline-updates-client.toml.in > colibri_imx7_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 sed -e "s~@server-ip@~${server_ip}~" 100-offline-updates-client.toml.in > colibri_imx7_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+
+sed -e "s~@usb-key@~${usb_key}~" 100-offline-updates-server.toml.in > apalis_imx8_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+sed -e "s~@usb-key@~${usb_key}~" 100-offline-updates-server.toml.in > apalis_imx8_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 
 for MACHINE_CONFIG in apalis_imx8_v1 colibri_imx7_v1; do
     (
