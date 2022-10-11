@@ -1,8 +1,6 @@
 tcb-env-setup.sh
 shared-data.tar.gz
 online-data.txt
-client-ip.txt
-server-ip.txt
 */shared-data.tar.gz
 credentials.zip
 */credentials.zip
@@ -15,3 +13,4 @@ api-credentials.txt
 */update/
 colibri_imx7_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 colibri_imx7_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+config.sh

@@ -8,13 +8,23 @@ for app in wget curl jq; do
     fi
 done
 
-if [ ! -e client-ip.txt ]; then
-    echo Please create client-ip.txt with the IP address or FQDN of the secondary/client board
+if [ ! -e config.sh ]; then
+    cat > config.sh <<EOF
+server_ip=
+client_ip=
+EOF
+    echo "Please edit config.sh and set parameter values"
     exit 1
 fi
 
-if [ ! -e server-ip.txt ]; then
-    echo Please create server-ip.txt with the IP address or FQDN of the primary/NFS server board
+source config.sh
+if [ -z "${client_ip}" ]; then
+    echo Please add client_ip to config.sh with the IP address or FQDN of the secondary/client board
+    exit 1
+fi
+
+if [ -z "${server_ip}" ]; then
+    echo Please add server_ip to config.sh with the IP address or FQDN of the primary/NFS server board
     exit 1
 fi
 
@@ -48,11 +58,11 @@ cp -f shared-data.tar.gz credentials.zip apalis_imx8_update/
 cp -f shared-data.tar.gz credentials.zip colibri_imx7_v1/
 cp -f shared-data.tar.gz credentials.zip colibri_imx7_update/
 
-sed -e "s~@client-ip@~$(cat client-ip.txt)~" exports.in > apalis_imx8_v1/changes/usr/etc/exports
-sed -e "s~@client-ip@~$(cat client-ip.txt)~" exports.in > apalis_imx8_update/changes/usr/etc/exports
+sed -e "s~@client-ip@~${client_ip}~" exports.in > apalis_imx8_v1/changes/usr/etc/exports
+sed -e "s~@client-ip@~${client_ip}~" exports.in > apalis_imx8_update/changes/usr/etc/exports
 
-sed -e "s~@server-ip@~$(cat server-ip.txt)~" 100-offline-updates.toml.in > colibri_imx7_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
-sed -e "s~@server-ip@~$(cat server-ip.txt)~" 100-offline-updates.toml.in > colibri_imx7_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+sed -e "s~@server-ip@~${server_ip}~" 100-offline-updates.toml.in > colibri_imx7_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+sed -e "s~@server-ip@~${server_ip}~" 100-offline-updates.toml.in > colibri_imx7_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 
 for MACHINE_CONFIG in apalis_imx8_v1 colibri_imx7_v1; do
     (
