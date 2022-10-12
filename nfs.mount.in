@@ -1,0 +1,12 @@
+[Unit]
+Description=NFS Mount for Secure Offline Updates
+After=network.target
+
+[Mount]
+What=@server-ip@:/nfs/
+Where=/nfs
+Type=nfs
+Options=_netdev,auto
+
+[Install]
+WantedBy=multi-user.target

@@ -67,11 +67,11 @@ cp -f shared-data.tar.gz credentials.zip colibri_imx7_update/
 sed -e "s~@client-ip@~${client_ip}~" exports.in > apalis_imx8_v1/changes/usr/etc/exports
 sed -e "s~@client-ip@~${client_ip}~" exports.in > apalis_imx8_update/changes/usr/etc/exports
 
-sed -e "s~@server-ip@~${server_ip}~" 100-offline-updates-client.toml.in > colibri_imx7_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
-sed -e "s~@server-ip@~${server_ip}~" 100-offline-updates-client.toml.in > colibri_imx7_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
-
 sed -e "s~@usb-key@~${usb_key}~" 100-offline-updates-server.toml.in > apalis_imx8_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 sed -e "s~@usb-key@~${usb_key}~" 100-offline-updates-server.toml.in > apalis_imx8_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+
+sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > colibri_imx7_v1/changes/usr/etc/systemd/system/nfs.mount 
+sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > colibri_imx7_update/changes/usr/etc/systemd/system/nfs.mount 
 
 for MACHINE_CONFIG in apalis_imx8_v1 colibri_imx7_v1; do
     (
