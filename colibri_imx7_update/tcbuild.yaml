@@ -85,5 +85,4 @@ output:
       # >> For "online" mode, properties "shared-data" and "online-data" must be specified. 
       # >> For "offline" mode, property "shared-data" must be specified alone.
       mode: "offline"
-      shared-data: "shared-data.tar.gz"                                                                                                                                                                                                                                                                                       
-      # online-data: "eyJpZCI6IjRmNWQzMTQ0LTMzMjYtNDliZS05NDAzLTczNjNjMWU2NzM5MSIsImNsaWVudF9pZCI6InByb3Zpc2lvbl81YTNhZjkyNV9jNmJhYmQ4Mi1iNmJhLTQyNzEtOGIwOS1lZTgwMTE5ZDRjZDYiLCJuYW1lIjoiZGV2aWNlIHByb3Zpc2lvbmluZyIsImRlc2NyaXB0aW9uIjoiRm9yIHByb3Zpc2lvbmluZyBkZXZpY2VzIGluIGFuIGF1dG9tYXRlZCB3YXkiLCJzZWNyZXQiOiJ3Qnl0ek1wTlVaMFNoV1VSQ1V3RXNhWFI2S2pRZFpDZCIsImFjY2Vzc190b2tlbl9saWZldGltZV9zZWNvbmRzIjo2MDQ4MDAsInR5cGUiOiJwcm92aXNpb24iLCJ0b2tlbl9lbmRwb2ludCI6Imh0dHBzOi8va2MudG9yaXpvbi5pby9hdXRoL3JlYWxtcy9vdGEtdXNlcnMvcHJvdG9jb2wvb3BlbmlkLWNvbm5lY3QvdG9rZW4iLCJkZWZhdWx0Ijp0cnVlfQ" 
+      shared-data: "shared-data.tar.gz"

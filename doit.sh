@@ -55,8 +55,7 @@ shopt -s expand_aliases
 if [ ! -e shared-data.tar.gz ]; then
     torizoncore-builder platform provisioning-data \
                         --credentials credentials.zip \
-                        --shared-data shared-data.tar.gz \
-                        --online-data DEFAULT | tail -1 > online-data.txt
+                        --shared-data shared-data.tar.gz
 fi
 
 cp -f shared-data.tar.gz credentials.zip apalis_imx8_v1/
@@ -139,7 +138,6 @@ for MACHINE_CONFIG in colibri_imx7_update apalis_imx8_update; do
 }
 EOF
         
-        set -x
 	    curl -s --header "Authorization: Bearer ${TDX_TOKEN}" \
 			--header "Content-Type: application/json" \
 			--location \
@@ -152,6 +150,5 @@ EOF
 			   --credentials credentials.zip \
 			   --output-directory update \
 			   --force
-        set +x
     )
 done
