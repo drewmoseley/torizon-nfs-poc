@@ -11,7 +11,9 @@ done
 if [ ! -e config.sh ]; then
     cat > config.sh <<EOF
 server_ip=
+server_config_dir_prefix=
 client_ip=
+client_config_dir_prefix=
 usb_key=
 api_client_id=
 api_client_secret=
@@ -37,7 +39,17 @@ if [ -z "${usb_key}" ]; then
 fi
 
 if [ -z "${api_client_id}" ] || [ -z "${api_client_secret}" ]; then
-    echo Please add API credentias from  https://app.torizon.io/#/account to config.sh
+    echo Please add API credentials from  https://app.torizon.io/#/account to config.sh
+    exit 1
+fi
+
+if [ -z "${server_config_dir_prefix}" ]; then
+    echo Please set server_config_dir_prefix in config.sh
+    exit 1
+fi
+
+if [ -z "${client_config_dir_prefix}" ]; then
+    echo Please set client_config_dir_prefix in config.sh
     exit 1
 fi
 
@@ -58,21 +70,29 @@ if [ ! -e shared-data.tar.gz ]; then
                         --shared-data shared-data.tar.gz
 fi
 
-cp -f shared-data.tar.gz credentials.zip apalis_imx8_v1/
-cp -f shared-data.tar.gz credentials.zip apalis_imx8_update/
-cp -f shared-data.tar.gz credentials.zip colibri_imx7_v1/
-cp -f shared-data.tar.gz credentials.zip colibri_imx7_update/
+cp -f shared-data.tar.gz credentials.zip ${server_config_dir_prefix}_v1/
+cp -f shared-data.tar.gz credentials.zip ${server_config_dir_prefix}_update/
+cp -f shared-data.tar.gz credentials.zip ${client_config_dir_prefix}_v1/
+cp -f shared-data.tar.gz credentials.zip ${client_config_dir_prefix}_update/
 
-sed -e "s~@client-ip@~${client_ip}~" exports.in > apalis_imx8_v1/changes/usr/etc/exports
-sed -e "s~@client-ip@~${client_ip}~" exports.in > apalis_imx8_update/changes/usr/etc/exports
+sed -e "s~@client-ip@~${client_ip}~" exports.in > ${server_config_dir_prefix}_v1/changes/usr/etc/exports
+sed -e "s~@client-ip@~${client_ip}~" exports.in > ${server_config_dir_prefix}_update/changes/usr/etc/exports
 
-sed -e "s~@usb-key@~${usb_key}~" 100-offline-updates-server.toml.in > apalis_imx8_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
-sed -e "s~@usb-key@~${usb_key}~" 100-offline-updates-server.toml.in > apalis_imx8_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+sed -e "s~@usb-key@~${usb_key}~" 100-offline-updates-server.toml.in > ${server_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+sed -e "s~@usb-key@~${usb_key}~" 100-offline-updates-server.toml.in > ${server_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 
-sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > colibri_imx7_v1/changes/usr/etc/systemd/system/nfs.mount 
-sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > colibri_imx7_update/changes/usr/etc/systemd/system/nfs.mount 
+mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants
+mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants
+ln -s /etc/systemd/system/multi-user.target.wants/nfs.mount \
+   ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.mount
+ln -s /etc/systemd/system/multi-user.target.wants/nfs.mount \
+   ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.mount
+sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/nfs.mount 
+sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/nfs.mount 
+mkdir -p ${server_config_dir_prefix}_v1/changes/nfs
+mkdir -p ${server_config_dir_prefix}_update/changes/nfs
 
-for MACHINE_CONFIG in apalis_imx8_v1 colibri_imx7_v1; do
+for MACHINE_CONFIG in ${server_config_dir_prefix}_v1 ${client_config_dir_prefix}_v1; do
     (
         cd $MACHINE_CONFIG
         rm -rf tezi
@@ -84,12 +104,12 @@ TDX_TOKEN=$(curl -s https://kc.torizon.io/auth/realms/ota-users/protocol/openid-
 				 -d client_id=${api_client_id} -d client_secret=${api_client_secret} \
 				 -d grant_type=client_credentials | jq -r .access_token)
 
-# Make sure colibri_imx7_update is first in the list so that it
-# can be built and included in the build of apalis_imx8_update
+# Make sure ${client_config_dir_prefix}_update is first in the list so that it
+# can be built and included in the build of ${server_config_dir_prefix}_update
 PACKAGE_VERSION=1
 EXPIRATION_DATE=$(date -d "+7 days" -u +%Y-%m-%dT%H:%M:%SZ)
 
-for MACHINE_CONFIG in colibri_imx7_update apalis_imx8_update; do
+for MACHINE_CONFIG in ${client_config_dir_prefix}_update ${server_config_dir_prefix}_update; do
     (
         cd $MACHINE_CONFIG
 

@@ -4,13 +4,10 @@ shared-data.tar.gz
 credentials.zip
 */credentials.zip
 tcb-env-setup.sh.tmp
-apalis_imx8_v1/changes/usr/etc/exports
-apalis_imx8_update/changes/usr/etc/exports
+*/changes/usr/etc/exports
 */tezi
 */build.hash
 */update/
-apalis_imx8_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
-apalis_imx8_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+*/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 config.sh
-colibri_imx7_v1/changes/usr/etc/systemd/system/nfs.mount
-colibri_imx7_update/changes/usr/etc/systemd/system/nfs.mount
+*/changes/usr/etc/systemd
