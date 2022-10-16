@@ -75,11 +75,29 @@ cp -f shared-data.tar.gz credentials.zip ${server_config_dir_prefix}_update/
 cp -f shared-data.tar.gz credentials.zip ${client_config_dir_prefix}_v1/
 cp -f shared-data.tar.gz credentials.zip ${client_config_dir_prefix}_update/
 
+sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/nfs.mount
+sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/nfs.mount
+mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/
+mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/
+sed -e "s~@offline-update-path@~/nfs/update~" \
+    100-offline-updates.toml.in \
+    > ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+sed -e "s~@offline-update-path@~/nfs/update~" \
+    100-offline-updates.toml.in \
+    > ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+
 sed -e "s~@client-ip@~${client_ip}~" exports.in > ${server_config_dir_prefix}_v1/changes/usr/etc/exports
 sed -e "s~@client-ip@~${client_ip}~" exports.in > ${server_config_dir_prefix}_update/changes/usr/etc/exports
-
-sed -e "s~@usb-key@~${usb_key}~" 100-offline-updates-server.toml.in > ${server_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
-sed -e "s~@usb-key@~${usb_key}~" 100-offline-updates-server.toml.in > ${server_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+mkdir -p ${server_config_dir_prefix}_v1/changes/nfs
+mkdir -p ${server_config_dir_prefix}_update/changes/nfs
+mkdir -p ${server_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/
+mkdir -p ${server_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/
+sed -e "s~@offline-update-path@~/var/rootdirs/media/${usb_key}/update~" \
+    100-offline-updates.toml.in \
+    > ${server_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+sed -e "s~@offline-update-path@~/var/rootdirs/media/${usb_key}/update~" \
+    100-offline-updates.toml.in \
+    > ${server_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 
 mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants
 mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants
@@ -87,10 +105,6 @@ ln -s /etc/systemd/system/multi-user.target.wants/nfs.mount \
    ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.mount
 ln -s /etc/systemd/system/multi-user.target.wants/nfs.mount \
    ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.mount
-sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/nfs.mount 
-sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/nfs.mount 
-mkdir -p ${server_config_dir_prefix}_v1/changes/nfs
-mkdir -p ${server_config_dir_prefix}_update/changes/nfs
 
 for MACHINE_CONFIG in ${server_config_dir_prefix}_v1 ${client_config_dir_prefix}_v1; do
     (
