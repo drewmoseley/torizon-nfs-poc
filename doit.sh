@@ -12,8 +12,10 @@ if [ ! -e config.sh ]; then
     cat > config.sh <<EOF
 server_ip=
 server_config_dir_prefix=
+server_machine=
 client_ip=
 client_config_dir_prefix=
+client_machine=
 usb_key=
 api_client_id=
 api_client_secret=
@@ -50,6 +52,16 @@ fi
 
 if [ -z "${client_config_dir_prefix}" ]; then
     echo Please set client_config_dir_prefix in config.sh
+    exit 1
+fi
+
+if [ -z "${server_machine}" ]; then
+    echo Please set server_machine in config.sh
+    exit 1
+fi
+
+if [ -z "${client_machine}" ]; then
+    echo Please set client_machine in config.sh
     exit 1
 fi
 
@@ -123,9 +135,12 @@ TDX_TOKEN=$(curl -s https://kc.torizon.io/auth/realms/ota-users/protocol/openid-
 PACKAGE_VERSION=1
 EXPIRATION_DATE=$(date -d "+7 days" -u +%Y-%m-%dT%H:%M:%SZ)
 
-for MACHINE_CONFIG in ${client_config_dir_prefix}_update ${server_config_dir_prefix}_update; do
+for FULL_MACHINE_CONFIG in ${client_machine}:${client_config_dir_prefix}_update ${server_machine}:${server_config_dir_prefix}_update; do
     (
-        cd $MACHINE_CONFIG
+        TORIZON_MACHINE=$(echo ${FULL_MACHINE_CONFIG} | cut -d: -f1)
+        CONFIG_DIR=$(echo ${FULL_MACHINE_CONFIG} | cut -d: -f2)
+        MACHINE_CONFIG=${CONFIG_DIR}
+        cd ${CONFIG_DIR}
 
         rm -rf tezi
 
