@@ -176,7 +176,7 @@ torizoncore_builder_build() {
 }
 
 torizoncore_builder_push() {
-    if [ $# != 3 ]; then
+    if [ $# != 2 ]; then
         echo "Usage: ${FUNCNAME[0]} MACHINE_CONFIG_DIR PACKAGE_VERSION"
         exit 1
     fi
@@ -195,14 +195,15 @@ torizoncore_builder_push() {
 # Use the server API to _define_ the lockbox.
 # currently tcb does not have this functionality
 torizoncore_builder_define_lockbox() {
-    if [ $# != 3 ]; then
-        echo "Usage: ${FUNCNAME[0]} MACHINE_CONFIG_DIR TDX_TOKEN PACKAGE_VERSION TORIZON_MACHINE"
+    if [ $# != 5 ]; then
+        echo "Usage: ${FUNCNAME[0]} MACHINE_CONFIG_DIR TDX_TOKEN PACKAGE_VERSION EXPIRATION_DATE TORIZON_MACHINE"
         exit 1
     fi
     local machine_config="${1}"
     local tdx_token="${2}"
     local package_version="${3}"
-    local torizon_machine="${4}"
+    local expiration_date="${4}"
+    local torizon_machine="${5}"
 
     cd ${machine_config}
     local build_hash=$(cat build.hash)
