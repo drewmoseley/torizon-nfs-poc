@@ -29,6 +29,7 @@ client_machine=
 usb_key=
 api_client_id=
 api_client_secret=
+package_version=
 EOF
         echo "Please edit config.sh and set parameter values"
         exit 1
@@ -74,6 +75,11 @@ EOF
         echo Please set client_machine in config.sh
         exit 1
     fi
+
+    if [ -z "${package_version}" ]; then
+        echo Please set package_version in config.sh
+        exit 1
+    fi
 }
 
 setup_torizoncore_builder() {
@@ -85,6 +91,13 @@ setup_torizoncore_builder() {
     if [ ! -e tcb-env-setup.sh ]; then
         wget https://raw.githubusercontent.com/toradex/tcb-env-setup/master/tcb-env-setup.sh
     fi
+
+    TCB=${TOP_DIR}/tcb.sh
+    TDX_TOKEN=$(curl -s https://kc.torizon.io/auth/realms/ota-users/protocol/openid-connect/token \
+				 -d client_id=${api_client_id} -d client_secret=${api_client_secret} \
+				 -d grant_type=client_credentials | jq -r .access_token)
+    EXPIRATION_DATE=$(date -d "+7 days" -u +%Y-%m-%dT%H:%M:%SZ)
+
     get_torizon_shared_data
 }
 
