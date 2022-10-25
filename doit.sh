@@ -7,6 +7,7 @@ verify_installed_apps
 create_or_verify_config
 setup_torizoncore_builder
 setup_server_config_files
+setup_client_config_files
 
 torizoncore_builder_build ${server_config_dir_prefix}_v1 ${TDX_TOKEN}
 torizoncore_builder_build ${client_config_dir_prefix}_v1 ${TDX_TOKEN}
