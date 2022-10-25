@@ -161,11 +161,13 @@ torizoncore_builder_build() {
     rm -rf tezi
     if [ -e "build.hash" ]; then
         local build_hash=$(cat build.hash)
-        echo Deleting image ${machine_config}-${build_hash}
-        curl -s --header "Authorization: Bearer ${TDX_TOKEN}" \
-			 --header "Content-Type: application/json" \
-			 --location \
-			 --request DELETE https://app.torizon.io/api/v1/user_repo/targets/${machine_config}-${build_hash} || true
+        if [ -n "${build_hash}" ]; then
+            echo Deleting image ${machine_config}-${build_hash}
+            curl -s --header "Authorization: Bearer ${TDX_TOKEN}" \
+			     --header "Content-Type: application/json" \
+			     --location \
+			     --request DELETE https://app.torizon.io/api/v1/user_repo/targets/${machine_config}-${build_hash} || true
+        fi
     fi
     ${TCB} build 2>&1 | tee build.out
     grep 'Deploying OSTree with checksum' build.out  | awk '{print $NF}' | tr -d '[:space:]' > build.hash
