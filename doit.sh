@@ -1,7 +1,8 @@
 #!/bin/bash
 
-source $(dirname $0)/utils.sh
-                              
+TOP_DIR=$(dirname $0)
+source ${TOP_DIR}/utils.sh
+
 verify_installed_apps
 create_or_verify_config
 setup_torizoncore_builder

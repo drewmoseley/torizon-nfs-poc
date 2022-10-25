@@ -85,25 +85,14 @@ setup_torizoncore_builder() {
     if [ ! -e tcb-env-setup.sh ]; then
         wget https://raw.githubusercontent.com/toradex/tcb-env-setup/master/tcb-env-setup.sh
     fi
-
-    source ./tcb-env-setup.sh -a remote
-    run_torizoncore_builder -h
-    # get_torizon_shared_data
-}
-
-# Explicitly run torizoncore-builder. We do it inside this function
-# because it does not export out to the parent shell environment
-run_torizoncore_builder() {
-    source ./tcb-env-setup.sh -a local
-    shopt -s expand_aliases
-    torizoncore-builder $*
+    get_torizon_shared_data
 }
 
 get_torizon_shared_data() {
     if [ ! -e shared-data.tar.gz ]; then
-        run_torizoncore_builder platform provisioning-data \
-                                --credentials credentials.zip \
-                                --shared-data shared-data.tar.gz
+        ${TCB} platform provisioning-data \
+               --credentials credentials.zip \
+               --shared-data shared-data.tar.gz
     fi
 
     cp -f shared-data.tar.gz credentials.zip ${server_config_dir_prefix}_v1/
@@ -165,7 +154,7 @@ torizoncore_builder_build() {
 			 --location \
 			 --request DELETE https://app.torizon.io/api/v1/user_repo/targets/${machine_config}-${build_hash} || true
     fi
-    torizoncore-builder build 2>&1 | tee build.out
+    ${TCB} build 2>&1 | tee build.out
     grep 'Deploying OSTree with checksum' build.out  | awk '{print $NF}' | tr -d '[:space:]' > build.hash
     rm -f build.out
     cd -
@@ -180,11 +169,11 @@ torizoncore_builder_push() {
     local package_version="${2}"
     
     cd ${machine_config}
-	torizoncore-builder platform push \
-			            --credentials credentials.zip \
-			            --package-name "${machine_config}" \
-			            --package-version "${package_version}" \
-			            "${machine_config}"
+	${TCB} platform push \
+		   --credentials credentials.zip \
+		   --package-name "${machine_config}" \
+		   --package-version "${package_version}" \
+		   "${machine_config}"
     cd -
 }
 
@@ -242,10 +231,10 @@ torizoncore_builder_build_lockbox() {
     local machine_config="${1}"
     local package_version="${2}"
     cd ${machine_config}
-	torizoncore-builder platform lockbox \
-			            "${machine_config}_${package_version}" \
-			            --credentials credentials.zip \
-			            --output-directory update \
-			            --force
+	${TCB} platform lockbox \
+		   "${machine_config}_${package_version}" \
+		   --credentials credentials.zip \
+		   --output-directory update \
+		   --force
     cd -
 }
