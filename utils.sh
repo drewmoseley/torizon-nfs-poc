@@ -172,7 +172,7 @@ torizoncore_builder_build() {
     ${TCB} build 2>&1 | tee build.out
     grep 'Deploying OSTree with checksum' build.out  | awk '{print $NF}' | tr -d '[:space:]' > build.hash
     rm -f build.out
-    cd -
+    cd - >/dev/null
 }
 
 torizoncore_builder_push() {
@@ -189,7 +189,7 @@ torizoncore_builder_push() {
 		   --package-name "${machine_config}" \
 		   --package-version "${package_version}" \
 		   "${machine_config}"
-    cd -
+    cd - >/dev/null
 }
 
 # Use the server API to _define_ the lockbox.
@@ -236,7 +236,7 @@ EOF
 		 --location \
 		 --request POST https://app.torizon.io/api/v1/admin/repo/offline-updates/${machine_config}_${package_version} \
 		 --data "${lockbox_body}"
-    cd -
+    cd - >/dev/null
 }
 
 torizoncore_builder_build_lockbox() {
@@ -252,5 +252,5 @@ torizoncore_builder_build_lockbox() {
 		   --credentials credentials.zip \
 		   --output-directory update \
 		   --force
-    cd -
+    cd - >/dev/null
 }
