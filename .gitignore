@@ -11,3 +11,4 @@ tcb-env-setup.sh.tmp
 */changes/usr/etc/sota/conf.d/100-offline-updates.toml
 config.sh
 */changes/usr/etc/systemd
+build-log.txt

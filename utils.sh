@@ -93,6 +93,8 @@ setup_torizoncore_builder() {
     fi
 
     TCB=${TOP_DIR}/tcb.sh
+    LOG=${TOP_DIR}/build-log.txt
+    rm -f ${LOG}
     TDX_TOKEN=$(curl -s https://kc.torizon.io/auth/realms/ota-users/protocol/openid-connect/token \
 				 -d client_id=${api_client_id} -d client_secret=${api_client_secret} \
 				 -d grant_type=client_credentials | jq -r .access_token)
@@ -103,9 +105,11 @@ setup_torizoncore_builder() {
 
 get_torizon_shared_data() {
     if [ ! -e shared-data.tar.gz ]; then
+        echo -n "Getting platform provisioning data "
         ${TCB} platform provisioning-data \
                --credentials credentials.zip \
-               --shared-data shared-data.tar.gz
+               --shared-data shared-data.tar.gz >> ${LOG} 2>&1
+        echo "--- rc=$?"
     fi
 
     cp -f shared-data.tar.gz credentials.zip ${server_config_dir_prefix}_v1/
@@ -162,16 +166,20 @@ torizoncore_builder_build() {
     if [ -e "build.hash" ]; then
         local build_hash=$(cat build.hash)
         if [ -n "${build_hash}" ]; then
-            echo Deleting image ${machine_config}-${build_hash}
-            curl -s --header "Authorization: Bearer ${TDX_TOKEN}" \
-			     --header "Content-Type: application/json" \
-			     --location \
-			     --request DELETE https://app.torizon.io/api/v1/user_repo/targets/${machine_config}-${build_hash} || true
+            echo -n "Deleting image ${machine_config}-${build_hash} "
+            status_code=$(curl -s -w '%{http_code}' --header "Authorization: Bearer ${TDX_TOKEN}" \
+			                   --header "Content-Type: application/json" \
+			                   --location \
+			                   --request DELETE https://app.torizon.io/api/v1/user_repo/targets/${machine_config}-${build_hash} || true)
+            echo "--- rc=${status_code}"
         fi
     fi
-    ${TCB} build 2>&1 | tee build.out
+    echo -n "Running \"torizoncore-builder build\" for ${machine_config}-"
+    ${TCB} build > build.out 2>&1
     grep 'Deploying OSTree with checksum' build.out  | awk '{print $NF}' | tr -d '[:space:]' > build.hash
+    cat build.out >> ${LOG} 2>&1
     rm -f build.out
+    echo "$(cat build.hash) --- rc=$?"
     cd - >/dev/null
 }
 
@@ -184,11 +192,13 @@ torizoncore_builder_push() {
     local package_version="${2}"
     
     cd ${machine_config}
+    echo -n "Running \"torizoncore-builder push\" for ${machine_config}_${package_version}-$(cat build.hash) "
 	${TCB} platform push \
 		   --credentials credentials.zip \
 		   --package-name "${machine_config}" \
 		   --package-version "${package_version}" \
-		   "${machine_config}"
+		   "${machine_config}" >> ${LOG} 2>&1
+    echo "--- rc=$?"
     cd - >/dev/null
 }
 
@@ -211,7 +221,7 @@ torizoncore_builder_define_lockbox() {
 					            --request GET https://app.torizon.io/api/v1/user_repo/targets.json | \
 					           jq ".signed.targets[\"${machine_config}-${build_hash}\"].length")
 
-    echo Creating Lockbox
+    echo -n "Defining Lockbox via API for ${machine_config}_${package_version} "
     read -d '' lockbox_body << EOF
 {
   "expiresAt": "${expiration_date}",
@@ -230,12 +240,13 @@ torizoncore_builder_define_lockbox() {
   }
 }
 EOF
-    
-	curl -s --header "Authorization: Bearer ${TDX_TOKEN}" \
-		 --header "Content-Type: application/json" \
-		 --location \
-		 --request POST https://app.torizon.io/api/v1/admin/repo/offline-updates/${machine_config}_${package_version} \
-		 --data "${lockbox_body}"
+
+	status_code=$(curl -s -w '%{http_code}' --header "Authorization: Bearer ${TDX_TOKEN}" \
+		               --header "Content-Type: application/json" \
+		               --location \
+		               --request POST https://app.torizon.io/api/v1/admin/repo/offline-updates/${machine_config}_${package_version} \
+		               --data "${lockbox_body}")
+    echo "--- rc=${status_code}"
     cd - >/dev/null
 }
 
@@ -247,10 +258,12 @@ torizoncore_builder_build_lockbox() {
     local machine_config="${1}"
     local package_version="${2}"
     cd ${machine_config}
+    echo -n "Building Lockbox for ${machine_config}_${package_version} "
 	${TCB} platform lockbox \
 		   "${machine_config}_${package_version}" \
 		   --credentials credentials.zip \
 		   --output-directory update \
-		   --force
+		   --force >> ${LOG} 2>&1
+    echo "--- rc=$?"
     cd - >/dev/null
 }
