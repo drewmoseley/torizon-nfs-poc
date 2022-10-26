@@ -128,7 +128,7 @@ setup_server_config_files() {
         > ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
     sed -e "s~@offline-update-path@~/nfs/update~" \
         100-offline-updates.toml.in \
-        > ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+        > ${client_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 }
 
 setup_client_config_files() {
@@ -143,7 +143,7 @@ setup_client_config_files() {
         > ${server_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
     sed -e "s~@offline-update-path@~/var/rootdirs/media/${usb_key}/update~" \
         100-offline-updates.toml.in \
-        > ${server_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+        > ${server_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 
     mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants
