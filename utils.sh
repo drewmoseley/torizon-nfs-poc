@@ -119,19 +119,6 @@ get_torizon_shared_data() {
 }
 
 setup_server_config_files() {
-    sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/nfs.mount
-    sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/nfs.mount
-    mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/
-    mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/
-    sed -e "s~@offline-update-path@~/nfs/update~" \
-        100-offline-updates.toml.in \
-        > ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
-    sed -e "s~@offline-update-path@~/nfs/update~" \
-        100-offline-updates.toml.in \
-        > ${client_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
-}
-
-setup_client_config_files() {
     sed -e "s~@client-ip@~${client_ip}~" exports.in > ${server_config_dir_prefix}_v1/changes/usr/etc/exports
     sed -e "s~@client-ip@~${client_ip}~" exports.in > ${server_config_dir_prefix}_update/changes/usr/etc/exports
     mkdir -p ${server_config_dir_prefix}_v1/changes/nfs
@@ -144,6 +131,19 @@ setup_client_config_files() {
     sed -e "s~@offline-update-path@~/var/rootdirs/media/${usb_key}/update~" \
         100-offline-updates.toml.in \
         > ${server_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+}
+
+setup_client_config_files() {
+    sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/nfs.mount
+    sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/nfs.mount
+    mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/
+    mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/
+    sed -e "s~@offline-update-path@~/nfs/update~" \
+        100-offline-updates.toml.in \
+        > ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+    sed -e "s~@offline-update-path@~/nfs/update~" \
+        100-offline-updates.toml.in \
+        > ${client_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 
     mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants
