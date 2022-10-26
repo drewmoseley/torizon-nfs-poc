@@ -20,16 +20,16 @@ verify_installed_apps() {
 create_or_verify_config() {
     if [ ! -e config.sh ]; then
         cat > config.sh <<EOF
-server_ip=
-server_config_dir_prefix=
-server_machine=
-client_ip=
-client_config_dir_prefix=
-client_machine=
-usb_key=
-api_client_id=
-api_client_secret=
-package_version=
+server_ip=""
+server_config_dir_prefix=""
+server_machine=""
+client_ip=""
+client_config_dir_prefix=""
+client_machine=""
+usb_key=""
+api_client_id=""
+api_client_secret=""
+package_version=""
 EOF
         echo "Please edit config.sh and set parameter values"
         exit 1
