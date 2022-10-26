@@ -147,9 +147,9 @@ setup_client_config_files() {
 
     mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants
-    ln -s /etc/systemd/system/multi-user.target.wants/nfs.mount \
+    ln -sf /etc/systemd/system/multi-user.target.wants/nfs.mount \
        ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.mount
-    ln -s /etc/systemd/system/multi-user.target.wants/nfs.mount \
+    ln -sf /etc/systemd/system/multi-user.target.wants/nfs.mount \
        ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.mount
 }
 
