@@ -22,6 +22,14 @@ else
     TCB_SETUP_OPTS="${TCB_SETUP_OPTS} -a remote"
 fi
 
+#
+# From here down we are providing passthrough options for Docker
+#
+TCB_SETUP_OPTS="${TCB_SETUP_OPTS} -- "
+
+IMAGES_DIR="$(readlink -f ${dirbase}/images)"
+TCB_SETUP_OPTS="${TCB_SETUP_OPTS} -v ${IMAGES_DIR}:/images"
+
 shopt -s expand_aliases
-. ${TCB_ENV} ${TCB_SETUP_OPTS} &>/dev/null
+. ${TCB_ENV} ${TCB_SETUP_OPTS}
 torizoncore-builder "$@"

@@ -2,7 +2,7 @@ input:
   easy-installer:
     # >> Choose one of the options (REQUIRED):
     # >> (1) Image as local folder or tarball.
-    local: torizon-core-lite-colibri-imx7-emmc-Tezi_5.7.1-devel-20220929182741+build.0.tar 
+    local: /images/torizon-core-lite-colibri-imx7-emmc-Tezi_5.7.0-devel-20221012105113+build.0.tar
     # >> (2) Remote file (optionally with a filename and or a sha256 checksum):
     # remote: "https://artifacts.toradex.com/.../torizon-core-docker-apalis-imx8-Tezi_5.1.0%2Bbuild.1.tar"
     # remote: "https://artifacts.toradex.com/.../torizon-core-docker-colibri-imx6-Tezi_5.0.0-devel-202009%2Bbuild.2.tar;filename=torizon-core-docker-colibri-imx6-Tezi_5.0.0-devel-202009+build.2.tar;sha256sum=368595fa3fb00af9604e70311de3b04df6b30b280deec2f8918c46f479026ddb"

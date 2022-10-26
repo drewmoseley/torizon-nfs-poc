@@ -12,3 +12,4 @@ tcb-env-setup.sh.tmp
 config.sh
 */changes/usr/etc/systemd
 build-log.txt
+images/
