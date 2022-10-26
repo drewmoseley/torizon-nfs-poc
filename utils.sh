@@ -111,11 +111,6 @@ get_torizon_shared_data() {
                --shared-data shared-data.tar.gz >> ${LOG} 2>&1
         echo "--- rc=$?"
     fi
-
-    cp -f shared-data.tar.gz ${server_config_dir_prefix}_v1/
-    cp -f shared-data.tar.gz ${server_config_dir_prefix}_update/
-    cp -f shared-data.tar.gz ${client_config_dir_prefix}_v1/
-    cp -f shared-data.tar.gz ${client_config_dir_prefix}_update/
 }
 
 setup_server_config_files() {
