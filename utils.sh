@@ -107,15 +107,15 @@ get_torizon_shared_data() {
     if [ ! -e shared-data.tar.gz ]; then
         echo -n "Getting platform provisioning data "
         ${TCB} platform provisioning-data \
-               --credentials credentials.zip \
+               --credentials /credentials.zip \
                --shared-data shared-data.tar.gz >> ${LOG} 2>&1
         echo "--- rc=$?"
     fi
 
-    cp -f shared-data.tar.gz credentials.zip ${server_config_dir_prefix}_v1/
-    cp -f shared-data.tar.gz credentials.zip ${server_config_dir_prefix}_update/
-    cp -f shared-data.tar.gz credentials.zip ${client_config_dir_prefix}_v1/
-    cp -f shared-data.tar.gz credentials.zip ${client_config_dir_prefix}_update/
+    cp -f shared-data.tar.gz ${server_config_dir_prefix}_v1/
+    cp -f shared-data.tar.gz ${server_config_dir_prefix}_update/
+    cp -f shared-data.tar.gz ${client_config_dir_prefix}_v1/
+    cp -f shared-data.tar.gz ${client_config_dir_prefix}_update/
 }
 
 setup_server_config_files() {
@@ -194,7 +194,7 @@ torizoncore_builder_push() {
     cd ${machine_config}
     echo -n "Running \"torizoncore-builder push\" for ${machine_config}_${package_version}-$(cat build.hash) "
 	${TCB} platform push \
-		   --credentials credentials.zip \
+		   --credentials /credentials.zip \
 		   --package-name "${machine_config}" \
 		   --package-version "${package_version}" \
 		   "${machine_config}" >> ${LOG} 2>&1
@@ -261,7 +261,7 @@ torizoncore_builder_build_lockbox() {
     echo -n "Building Lockbox for ${machine_config}_${package_version} "
 	${TCB} platform lockbox \
 		   "${machine_config}_${package_version}" \
-		   --credentials credentials.zip \
+		   --credentials /credentials.zip \
 		   --output-directory update \
 		   --force >> ${LOG} 2>&1
     echo "--- rc=$?"

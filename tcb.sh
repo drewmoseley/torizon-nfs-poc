@@ -30,6 +30,9 @@ TCB_SETUP_OPTS="${TCB_SETUP_OPTS} -- "
 IMAGES_DIR="$(readlink -f ${dirbase}/images)"
 TCB_SETUP_OPTS="${TCB_SETUP_OPTS} -v ${IMAGES_DIR}:/images"
 
+CREDENTIALS="$(readlink -f ${dirbase})/credentials.zip"
+TCB_SETUP_OPTS="${TCB_SETUP_OPTS} -v ${CREDENTIALS}:/credentials.zip"
+
 shopt -s expand_aliases
 . ${TCB_ENV} ${TCB_SETUP_OPTS}
 torizoncore-builder "$@"

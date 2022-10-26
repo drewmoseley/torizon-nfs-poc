@@ -2,7 +2,6 @@ tcb-env-setup.sh
 shared-data.tar.gz
 */shared-data.tar.gz
 credentials.zip
-*/credentials.zip
 tcb-env-setup.sh.tmp
 */changes/usr/etc/exports
 */tezi
