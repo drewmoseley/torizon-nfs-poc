@@ -205,15 +205,14 @@ torizoncore_builder_push() {
 # Use the server API to _define_ the lockbox.
 # currently tcb does not have this functionality
 torizoncore_builder_define_lockbox() {
-    if [ $# != 5 ]; then
-        echo "Usage: ${FUNCNAME[0]} MACHINE_CONFIG_DIR TDX_TOKEN PACKAGE_VERSION EXPIRATION_DATE TORIZON_MACHINE"
+    if [ $# != 4 ]; then
+        echo "Usage: ${FUNCNAME[0]} MACHINE_CONFIG_DIR TDX_TOKEN EXPIRATION_DATE TORIZON_MACHINE"
         exit 1
     fi
     local machine_config="${1}"
     local tdx_token="${2}"
-    local package_version="${3}"
-    local expiration_date="${4}"
-    local torizon_machine="${5}"
+    local expiration_date="${3}"
+    local torizon_machine="${4}"
 
     cd ${machine_config}
     local build_hash=$(cat build.hash)
@@ -221,7 +220,7 @@ torizoncore_builder_define_lockbox() {
 					            --request GET https://app.torizon.io/api/v1/user_repo/targets.json | \
 					           jq ".signed.targets[\"${machine_config}-${build_hash}\"].length")
 
-    echo -n "Defining Lockbox via API for ${machine_config}_${package_version} "
+    echo -n "Defining Lockbox via API for ${machine_config} "
     read -d '' lockbox_body << EOF
 {
   "expiresAt": "${expiration_date}",
@@ -244,23 +243,22 @@ EOF
 	status_code=$(curl -s -w '%{http_code}' --header "Authorization: Bearer ${TDX_TOKEN}" \
 		               --header "Content-Type: application/json" \
 		               --location \
-		               --request POST https://app.torizon.io/api/v1/admin/repo/offline-updates/${machine_config}_${package_version} \
+		               --request POST https://app.torizon.io/api/v1/admin/repo/offline-updates/${machine_config} \
 		               --data "${lockbox_body}")
     echo "--- rc=${status_code}"
     cd - >/dev/null
 }
 
 torizoncore_builder_build_lockbox() {
-    if [ $# != 2 ]; then
-        echo "Usage: ${FUNCNAME[0]} MACHINE_CONFIG_DIR PACKAGE_VERSION"
+    if [ $# != 1 ]; then
+        echo "Usage: ${FUNCNAME[0]} MACHINE_CONFIG_DIR"
         exit 1
     fi
     local machine_config="${1}"
-    local package_version="${2}"
     cd ${machine_config}
-    echo -n "Building Lockbox for ${machine_config}_${package_version} "
+    echo -n "Building Lockbox for ${machine_config} "
 	${TCB} platform lockbox \
-		   "${machine_config}_${package_version}" \
+		   "${machine_config}" \
 		   --credentials /credentials.zip \
 		   --output-directory update \
 		   --force >> ${LOG} 2>&1
