@@ -56,6 +56,11 @@ EOF
         exit 1
     fi
 
+    if [[ ${api_client_id} == *"provision"* ]] || [[ ${api_client_id} != *"api-minimal"* ]]; then
+	echo Please add an API client with api-minimal access type
+	exit 1
+    fi
+
     if [ -z "${server_config_dir_prefix}" ]; then
         echo Please set server_config_dir_prefix in config.sh
         exit 1
