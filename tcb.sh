@@ -33,8 +33,8 @@ TCB_SETUP_OPTS="${TCB_SETUP_OPTS} -v ${IMAGES_DIR}:/images"
 CREDENTIALS="$(readlink -f ${dirbase})/credentials.zip"
 TCB_SETUP_OPTS="${TCB_SETUP_OPTS} -v ${CREDENTIALS}:/credentials.zip"
 
-SHARED_DATA="$(readlink -f ${dirbase})/shared-data.tar.gz"
-TCB_SETUP_OPTS="${TCB_SETUP_OPTS} -v ${SHARED_DATA}:/shared-data.tar.gz"
+SHARED_DATA_DIR="$(readlink -f ${dirbase}/)"
+TCB_SETUP_OPTS="${TCB_SETUP_OPTS} -v ${SHARED_DATA_DIR}:/shared-data"
 
 shopt -s expand_aliases
 . ${TCB_ENV} ${TCB_SETUP_OPTS}

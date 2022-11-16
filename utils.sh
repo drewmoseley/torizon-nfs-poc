@@ -113,7 +113,7 @@ get_torizon_shared_data() {
         echo -n "Getting platform provisioning data "
         ${TCB} platform provisioning-data \
                --credentials /credentials.zip \
-               --shared-data shared-data.tar.gz >> ${LOG} 2>&1
+               --shared-data /shared-data/shared-data.tar.gz >> ${LOG} 2>&1
         echo "--- rc=$?"
     fi
 }

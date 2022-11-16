@@ -85,4 +85,4 @@ output:
       # >> For "online" mode, properties "shared-data" and "online-data" must be specified. 
       # >> For "offline" mode, property "shared-data" must be specified alone.
       mode: "offline"
-      shared-data: "/shared-data.tar.gz"
+      shared-data: "/shared-data/shared-data.tar.gz"
