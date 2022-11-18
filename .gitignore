@@ -11,3 +11,4 @@ config.sh
 */changes/usr/etc/systemd
 build-log.txt
 images/
+*/changes/nfs
