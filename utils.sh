@@ -138,6 +138,8 @@ setup_client_config_files() {
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system
     sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/nfs.mount
     sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/nfs.mount
+    cp nfs.automount.in ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/nfs.automount
+    cp nfs.automount.in ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/nfs.automount
     mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/
     sed -e "s~@offline-update-path@~/nfs/update~" \
@@ -149,10 +151,10 @@ setup_client_config_files() {
 
     mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants
-    ln -sf /etc/systemd/system/multi-user.target.wants/nfs.mount \
-       ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.mount
-    ln -sf /etc/systemd/system/multi-user.target.wants/nfs.mount \
-       ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.mount
+    ln -sf /etc/systemd/system/nfs.automount \
+       ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.automount
+    ln -sf /etc/systemd/system/nfs.automount \
+       ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.automount
 }
 
 torizoncore_builder_build() {
