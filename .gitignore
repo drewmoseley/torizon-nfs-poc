@@ -12,3 +12,4 @@ config.sh
 build-log.txt
 images/
 */changes/nfs
+*/changes/usr/etc/greenboot

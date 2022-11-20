@@ -131,6 +131,10 @@ setup_server_config_files() {
     sed -e "s~@offline-update-path@~/var/rootdirs/media/${usb_key}/update~" \
         100-offline-updates.toml.in \
         > ${server_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+    mkdir -p ${server_config_dir_prefix}_v1/changes/usr/etc/greenboot/check/required.d/
+    mkdir -p ${server_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
+    cp 99-nfs-server-coordinated-update.sh ${server_config_dir_prefix}_v1/changes/usr/etc/greenboot/check/required.d/
+    cp 99-nfs-server-coordinated-update.sh ${server_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
 }
 
 setup_client_config_files() {
@@ -155,6 +159,11 @@ setup_client_config_files() {
        ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.automount
     ln -sf /etc/systemd/system/nfs.automount \
        ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.automount
+
+    mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/greenboot/check/required.d/
+    mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
+    cp 99-nfs-client-coordinated-update.sh ${client_config_dir_prefix}_v1/changes/usr/etc/greenboot/check/required.d/
+    cp 99-nfs-client-coordinated-update.sh ${client_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
 }
 
 torizoncore_builder_build() {
