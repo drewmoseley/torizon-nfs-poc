@@ -1,0 +1,10 @@
+[Unit]
+Description=Check for secure offline update availability and install.
+ConditionPathExists=/nfs/update/metadata
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/aktualizr-torizon once
+
+[Install]
+WantedBy=multi-user.target
