@@ -17,6 +17,18 @@
         # Handle coordination between gateway and client devices
         # here for synchronous update and rollback
         echo "We are in an upgrade."
+
+        if [ -e /nfs/update_secondary.tar ]; then
+            # Extract the secondary update and create a symlink to /nfs/update
+            # This ensures that the artifact is completely extracted by the time
+            # the client device detects it.
+            echo "Extracting /nfs/update_secondary.tar"
+            tar -C /nfs -xf /nfs/update_secondary.tar
+            echo "Creating /nfs/update symlink"
+            ln -sf /nfs/update_secondary /nfs/update
+        fi
+
+        # TODO: Wait for response from client and cleanup
     elif [ ${UPGRADE_AVAILABLE} = "0" ]; then
         # No upgrade in process
         echo "We are not in an upgrade."
