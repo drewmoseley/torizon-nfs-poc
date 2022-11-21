@@ -164,12 +164,6 @@ setup_client_config_files() {
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
     cp 99-nfs-client-coordinated-update.sh ${client_config_dir_prefix}_v1/changes/usr/etc/greenboot/check/required.d/
     cp 99-nfs-client-coordinated-update.sh ${client_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
-
-    # Disable aktualizr as a daemon. We do this by adding a ConditionPathExists on a nonexistent file
-    mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/aktualizr-torizon.service.d
-    mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/aktualizr-torizon.service.d
-    cp aktualizr-override.conf ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/aktualizr-torizon.service.d/override.conf
-    cp aktualizr-override.conf ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/aktualizr-torizon.service.d/override.conf
 }
 
 torizoncore_builder_build() {
