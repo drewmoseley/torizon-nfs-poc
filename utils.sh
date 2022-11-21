@@ -138,6 +138,8 @@ setup_server_config_files() {
 }
 
 setup_client_config_files() {
+    mkdir -p ${client_config_dir_prefix}_v1/changes/nfs
+    mkdir -p ${client_config_dir_prefix}_update/changes/nfs
     mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system
     sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/nfs.mount
