@@ -1,0 +1,11 @@
+[Unit]
+Description=Periodically check for secure offline update availability
+
+[Timer]
+# Wait for 2 minutes after boot before checking
+OnBootSec=120
+# Every 2 minutes
+OnCalendar=*:0/2
+
+[Install]
+WantedBy=timers.target

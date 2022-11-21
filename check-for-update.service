@@ -1,0 +1,10 @@
+[Unit]
+Description=Check for secure offline update availability and create symlink.
+ConditionPathExists=/nfs/update
+
+[Service]
+Type=simple
+ExecStart=ln -s /nfs/update /tmp/update
+
+[Install]
+WantedBy=multi-user.target

@@ -146,10 +146,10 @@ setup_client_config_files() {
     cp nfs.automount.in ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/nfs.automount
     mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/
-    sed -e "s~@offline-update-path@~/nfs/update~" \
+    sed -e "s~@offline-update-path@~/tmp/update~" \
         100-offline-updates.toml.in \
         > ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
-    sed -e "s~@offline-update-path@~/nfs/update~" \
+    sed -e "s~@offline-update-path@~/tmp/update~" \
         100-offline-updates.toml.in \
         > ${client_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 
@@ -164,6 +164,20 @@ setup_client_config_files() {
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
     cp 99-nfs-client-coordinated-update.sh ${client_config_dir_prefix}_v1/changes/usr/etc/greenboot/check/required.d/
     cp 99-nfs-client-coordinated-update.sh ${client_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
+
+    # Setup a systemd timer to check for  the offline update to be available. When it is, create a symlink in
+    # /tmp/update. This ensures atomicity and works around the issue where aktualizr locks up while scanning
+    # an automount point
+    mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/timers.target.wants
+    mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/timers.target.wants
+    cp check-for-update.timer ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/
+    cp check-for-update.service ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/
+    cp check-for-update.timer ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/
+    cp check-for-update.service ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/
+    ln -sf /etc/systemd/system/check-for-update.timer \
+       ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/timers.target.wants/check-for-update.timer
+    ln -sf /etc/systemd/system/check-for-update.timer \
+       ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/timers.target.wants/check-for-update.timer
 }
 
 torizoncore_builder_build() {
