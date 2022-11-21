@@ -13,3 +13,4 @@ build-log.txt
 images/
 */changes/nfs
 */changes/usr/etc/greenboot
+*/changes/usr/bin/check-for-update.sh

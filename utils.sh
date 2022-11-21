@@ -170,8 +170,12 @@ setup_client_config_files() {
     # Setup a systemd timer to check for  the offline update to be available. When it is, create a symlink in
     # /tmp/update. This ensures atomicity and works around the issue where aktualizr locks up while scanning
     # an automount point
+    mkdir -p ${client_config_dir_prefix}_v1/changes/usr/bin/
+    mkdir -p ${client_config_dir_prefix}_update/changes/usr/bin/
     mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/timers.target.wants
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/timers.target.wants
+    cp check-for-update.sh ${client_config_dir_prefix}_v1/changes/usr/bin/
+    cp check-for-update.sh ${client_config_dir_prefix}_update/changes/usr/bin/
     cp check-for-update.timer ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/
     cp check-for-update.service ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/
     cp check-for-update.timer ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/
