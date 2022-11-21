@@ -170,19 +170,6 @@ setup_client_config_files() {
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/aktualizr-torizon.service.d
     cp aktualizr-override.conf ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/aktualizr-torizon.service.d/override.conf
     cp aktualizr-override.conf ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/aktualizr-torizon.service.d/override.conf
-
-    # Setup a systemd timer to check for the offline update to be available and then run aktualizr in run-once mode
-    # We currently cannot rely on standard aktualizr polling for this as the systemd automounts cause it to timeout and lockup.
-    mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/timers.target.wants
-    mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/timers.target.wants
-    cp aktualizr-runonce.timer ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/
-    cp aktualizr-runonce.service ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/
-    cp aktualizr-runonce.timer ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/
-    cp aktualizr-runonce.service ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/
-    ln -sf /etc/systemd/system/aktualizr-runonce.timer \
-       ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/timers.target.wants/aktualizr-runonce.timer
-    ln -sf /etc/systemd/system/aktualizr-runonce.timer \
-       ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/timers.target.wants/aktualizr-runonce.timer
 }
 
 torizoncore_builder_build() {
