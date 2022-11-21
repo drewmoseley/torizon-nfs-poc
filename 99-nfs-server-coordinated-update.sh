@@ -26,9 +26,17 @@
             tar -C /nfs -xf /nfs/update_secondary.tar
             echo "Creating /nfs/update symlink"
             ln -sf /nfs/update_secondary /nfs/update
-        fi
 
-        # TODO: Wait for response from client and cleanup
+            # Wait for the client to update
+            while [ ! -e /nfs/client.update.done ]; do
+                echo Waiting for client update
+                sleep 5;
+            done
+
+            # Cleanup
+            echo Cleaning up from update
+            rm -rf /nfs/update /nfs/update_secondary /nfs/client.update.done
+        fi
     elif [ ${UPGRADE_AVAILABLE} = "0" ]; then
         # No upgrade in process
         echo "We are not in an upgrade."

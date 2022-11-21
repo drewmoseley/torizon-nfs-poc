@@ -16,6 +16,12 @@
         # Handle coordination between gateway and client devices
         # here for synchronous update and rollback
         echo "We are in an upgrade."
+
+        # Signal the server that we are done
+        touch /nfs/client.update.done
+
+        # Cleanup the client
+        [ -L /tmp/update ] && echo Cleaning /tmp/update && rm /tmp/update
     elif [ ${UPGRADE_AVAILABLE} = "0" ]; then
         # No upgrade in process
         echo "We are not in an upgrade."
