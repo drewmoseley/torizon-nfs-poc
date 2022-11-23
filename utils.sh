@@ -131,28 +131,59 @@ setup_server_config_files() {
     sed -e "s~@offline-update-path@~/var/rootdirs/media/${usb_key}/update~" \
         100-offline-updates.toml.in \
         > ${server_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
+    mkdir -p ${server_config_dir_prefix}_v1/changes/usr/etc/greenboot/check/required.d/
+    mkdir -p ${server_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
+    cp 99-nfs-server-coordinated-update.sh ${server_config_dir_prefix}_v1/changes/usr/etc/greenboot/check/required.d/
+    cp 99-nfs-server-coordinated-update.sh ${server_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
 }
 
 setup_client_config_files() {
+    mkdir -p ${client_config_dir_prefix}_v1/changes/nfs
+    mkdir -p ${client_config_dir_prefix}_update/changes/nfs
     mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system
     sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/nfs.mount
     sed -s "s~@server-ip@~${server_ip}~" nfs.mount.in > ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/nfs.mount
+    cp nfs.automount.in ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/nfs.automount
+    cp nfs.automount.in ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/nfs.automount
     mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/
-    sed -e "s~@offline-update-path@~/nfs/update~" \
+    sed -e "s~@offline-update-path@~/tmp/update~" \
         100-offline-updates.toml.in \
         > ${client_config_dir_prefix}_v1/changes/usr/etc/sota/conf.d/100-offline-updates.toml
-    sed -e "s~@offline-update-path@~/nfs/update~" \
+    sed -e "s~@offline-update-path@~/tmp/update~" \
         100-offline-updates.toml.in \
         > ${client_config_dir_prefix}_update/changes/usr/etc/sota/conf.d/100-offline-updates.toml
 
     mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants
-    ln -sf /etc/systemd/system/multi-user.target.wants/nfs.mount \
-       ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.mount
-    ln -sf /etc/systemd/system/multi-user.target.wants/nfs.mount \
-       ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.mount
+    ln -sf /etc/systemd/system/nfs.automount \
+       ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.automount
+    ln -sf /etc/systemd/system/nfs.automount \
+       ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/multi-user.target.wants/nfs.automount
+
+    mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/greenboot/check/required.d/
+    mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
+    cp 99-nfs-client-coordinated-update.sh ${client_config_dir_prefix}_v1/changes/usr/etc/greenboot/check/required.d/
+    cp 99-nfs-client-coordinated-update.sh ${client_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
+
+    # Setup a systemd timer to check for  the offline update to be available. When it is, create a symlink in
+    # /tmp/update. This ensures atomicity and works around the issue where aktualizr locks up while scanning
+    # an automount point
+    mkdir -p ${client_config_dir_prefix}_v1/changes/usr/bin/
+    mkdir -p ${client_config_dir_prefix}_update/changes/usr/bin/
+    mkdir -p ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/timers.target.wants
+    mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/timers.target.wants
+    cp check-for-update.sh ${client_config_dir_prefix}_v1/changes/usr/bin/
+    cp check-for-update.sh ${client_config_dir_prefix}_update/changes/usr/bin/
+    cp check-for-update.timer ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/
+    cp check-for-update.service ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/
+    cp check-for-update.timer ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/
+    cp check-for-update.service ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/
+    ln -sf /etc/systemd/system/check-for-update.timer \
+       ${client_config_dir_prefix}_v1/changes/usr/etc/systemd/system/timers.target.wants/check-for-update.timer
+    ln -sf /etc/systemd/system/check-for-update.timer \
+       ${client_config_dir_prefix}_update/changes/usr/etc/systemd/system/timers.target.wants/check-for-update.timer
 }
 
 torizoncore_builder_build() {

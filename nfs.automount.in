@@ -1,0 +1,8 @@
+[Unit]
+Description=Automount NFS Secure Offline Updates
+
+[Automount]
+Where=/nfs
+
+[Install]
+WantedBy=multi-user.target

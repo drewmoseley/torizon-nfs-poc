@@ -1,0 +1,9 @@
+[Unit]
+Description=Check for secure offline update availability and create symlink.
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/check-for-update.sh
+
+[Install]
+WantedBy=multi-user.target
