@@ -166,6 +166,7 @@ setup_client_config_files() {
     mkdir -p ${client_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
     cp 99-nfs-client-coordinated-update.sh ${client_config_dir_prefix}_v1/changes/usr/etc/greenboot/check/required.d/
     cp 99-nfs-client-coordinated-update.sh ${client_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
+    cp 98-force-client-rollback.sh ${client_config_dir_prefix}_update/changes/usr/etc/greenboot/check/required.d/
 
     # Setup a systemd timer to check for  the offline update to be available. When it is, create a symlink in
     # /tmp/update. This ensures atomicity and works around the issue where aktualizr locks up while scanning
