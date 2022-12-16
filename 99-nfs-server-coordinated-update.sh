@@ -12,7 +12,6 @@
         sleep 1
     done
 
-    UPGRADE_AVAILABLE=$(fw_printenv upgrade_available | cut -d '=' -f 2)
     if [ ${UPGRADE_AVAILABLE} = "1" ]; then
         # Handle coordination between gateway and client devices
         # here for synchronous update and rollback
@@ -37,27 +36,20 @@
 
             # update needs to be removed if client has updated successfully or rolled back
             echo Cleaning up update files
-            rm -rf /nfs/update /nfs/update_secondary /nfs/client.update.done
+            rm -rf /nfs/update /nfs/update_secondary
 
             # If client has rolled back
             if [ -e /nfs/client.on.rollback ]; then
                 echo "Cleaning up rollback feedback from client"
-                rm -rf /nfs/client.on.rollback
-                echo "Server on rollback"
+                echo "Rolling back server"
                 fw_setenv rollback 1
-                saveenv
-
-                IS_ROLLBACK=$(fw_printenv rollback | cut -d '=' -f 2)
-
-                if [ ${IS_ROLLBACK} == "1" ]; then
-                    echo "System rebooting soon"
-                    exit 1
-		fi
+            elif [ -e /nfs/client.update.done ]; then
+                echo "Client has successfuly updated"
+                rm -f /nfs/client.update.done
             else
-                echo "No feedback received from client yet!"
+                echo "Error. Unexpected client status: $(echo /nfs/client*)"
             fi
         fi
-
     elif [ ${UPGRADE_AVAILABLE} = "0" ]; then
         # No upgrade in process
         echo "We are not in an upgrade."
@@ -66,5 +58,12 @@
     fi
 ) >>/tmp/nfs-server-coordination-log.txt
 
-exit 0
-
+rc=0
+if [ -e /nfs/client.on.rollback ]; then
+    rm -f /nfs/client.on.rollback
+    rc=1
+elif [ -e /nfs/client.update.done ]; then
+    rm -f /nfs/client.update.done
+fi
+    
+exit ${rc}

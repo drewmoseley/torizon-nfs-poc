@@ -36,8 +36,7 @@
         echo "Error reading rollback from U-Boot environment.  Waiting 1s and trying again"
         sleep 1
     done
-    
-    IS_ROLLBACK=$(fw_printenv rollback | cut -d '=' -f 2)
+
     if [ ${IS_ROLLBACK} = "1" ]; then
         # Handle coordination between gateway and client devices
         # here for synchronous update and rollback
@@ -45,7 +44,6 @@
 
         # Signal the server that we are on rollback
         touch /nfs/client.on.rollback
-
     elif [ ${IS_ROLLBACK} = "0" ]; then
         # Not in a rollback process
         echo "We are not in a rollback."
