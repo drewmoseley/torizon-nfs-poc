@@ -19,4 +19,5 @@ images/
 */changes/nfs/update_secondary.tar
 */changes/usr/etc/greenboot/check/required.d/99-nfs-client-coordinated-update.sh
 */changes/usr/etc/greenboot/check/required.d/99-nfs-server-coordinated-update.sh
+*/changes/usr/etc/greenboot/check/required.d/98-force-client-rollback.sh
 */changes/usr/bin/check-for-update.sh
